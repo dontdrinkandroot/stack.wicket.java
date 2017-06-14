@@ -1,0 +1,282 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>net.dontdrinkandroot</groupId>
+    <artifactId>stack.wicket</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <description>Dontdrinkandroot wicket stack</description>
+    <packaging>war</packaging>
+
+    <developers>
+        <developer>
+            <name>Philip Washington Sorst</name>
+            <url>https://sorst.net</url>
+        </developer>
+    </developers>
+
+    <organization>
+        <name>dontdrinkandroot</name>
+        <url>https://dontdrinkandroot.net</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <prerequisites>
+        <maven>3.0</maven>
+    </prerequisites>
+
+    <scm>
+        <url>git@github.com:dontdrinkandroot/stack.wciket.java.git</url>
+        <connection>scm:git:git@github.com/dontdrinkandroot/stack.wicket.java.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/dontdrinkandroot/stack.wicket.java.git
+        </developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>github</system>
+        <url>https://github.com/dontdrinkandroot/stack.wicket.java/issues</url>
+    </issueManagement>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.javax.servlet-api>3.1.0</version.javax.servlet-api>
+        <version.net.dontdrinkandroot.wicket>0.5.0-SNAPSHOT</version.net.dontdrinkandroot.wicket>
+        <version.net.dontdrinkandroot.persistence.jpa>0.3.0-SNAPSHOT</version.net.dontdrinkandroot.persistence.jpa>
+        <version.org.apache.wicket>7.7.0</version.org.apache.wicket>
+        <version.org.springframework>4.3.9.RELEASE</version.org.springframework>
+        <version.org.springframework.security>4.2.3.RELEASE</version.org.springframework.security>
+        <version.junit>4.12</version.junit>
+        <version.org.apache.commons.commons-dbcp2>2.1.1</version.org.apache.commons.commons-dbcp2>
+        <version.org.hibernate>5.2.10.Final</version.org.hibernate>
+        <version.org.eclipse.jetty>9.3.10.v20160621</version.org.eclipse.jetty>
+        <version.org.apache.logging.log4j>2.8.2</version.org.apache.logging.log4j>
+        <version.org.hsqldb>2.4.0</version.org.hsqldb>
+        <!-- Plugins -->
+        <version.org.lesscss.lesscss-maven-plugin>1.7.0.1.1</version.org.lesscss.lesscss-maven-plugin>
+        <version.maven-compiler-plugin>3.6.1</version.maven-compiler-plugin>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${version.maven-compiler-plugin}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.lesscss</groupId>
+                <artifactId>lesscss-maven-plugin</artifactId>
+                <version>${version.org.lesscss.lesscss-maven-plugin}</version>
+                <configuration>
+                    <sourceDirectory>src/main/webapp/css/</sourceDirectory>
+                    <outputDirectory>src/main/webapp/css/</outputDirectory>
+                    <compress>true</compress>
+                    <includes>
+                        <include>style.less</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>${version.org.eclipse.jetty}</version>
+            </plugin>
+
+        </plugins>
+
+        <!-- Make sure HTML files are also copied from main/java -->
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <filtering>false</filtering>
+                <directory>src/test/resources</directory>
+            </testResource>
+            <testResource>
+                <filtering>false</filtering>
+                <directory>src/test/java</directory>
+                <includes>
+                    <include>**</include>
+                </includes>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>oss-sonatype</id>
+            <name>oss-sonatype</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${version.org.springframework}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${version.org.springframework.security}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${version.org.springframework.security}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.dontdrinkandroot</groupId>
+            <artifactId>wicket.bootstrap</artifactId>
+            <version>${version.net.dontdrinkandroot.wicket}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-spring</artifactId>
+            <version>${version.org.apache.wicket}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-auth-roles</artifactId>
+            <version>${version.org.apache.wicket}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.wicket</groupId>
+            <artifactId>wicket-extensions</artifactId>
+            <version>${version.org.apache.wicket}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${version.org.hsqldb}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.dontdrinkandroot</groupId>
+            <artifactId>persistence.jpa</artifactId>
+            <version>${version.net.dontdrinkandroot.persistence.jpa}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${version.org.hibernate}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${version.org.hibernate}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${version.org.springframework}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+            <version>${version.org.apache.commons.commons-dbcp2}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${version.org.apache.logging.log4j}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${version.org.apache.logging.log4j}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${version.javax.servlet-api}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${version.junit}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${version.org.springframework}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>

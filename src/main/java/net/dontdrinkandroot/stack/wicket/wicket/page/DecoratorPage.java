@@ -1,0 +1,87 @@
+package net.dontdrinkandroot.stack.wicket.wicket.page;
+
+import net.dontdrinkandroot.stack.wicket.wicket.WebApplication;
+import net.dontdrinkandroot.stack.wicket.wicket.component.item.SignInItem;
+import net.dontdrinkandroot.stack.wicket.wicket.component.item.UserMenuDropDownItem;
+import net.dontdrinkandroot.wicket.behavior.CssClassAppender;
+import net.dontdrinkandroot.wicket.bootstrap.behavior.ModalRequestBehavior;
+import net.dontdrinkandroot.wicket.bootstrap.component.item.BookmarkablePageLinkItem;
+import net.dontdrinkandroot.wicket.bootstrap.component.navbar.Navbar;
+import net.dontdrinkandroot.wicket.bootstrap.css.BootstrapCssClass;
+import net.dontdrinkandroot.wicket.bootstrap.page.BootstrapPage;
+import org.apache.wicket.Component;
+import org.apache.wicket.markup.head.CssUrlReferenceHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
+import org.apache.wicket.markup.repeater.RepeatingView;
+import org.apache.wicket.model.Model;
+
+/**
+ * @author Philip Washington Sorst <philip@sorst.net>
+ */
+public class DecoratorPage<T> extends BootstrapPage<T>
+{
+    public static final String MODAL_ID = "modal";
+
+    public static final String NAVBAR_ID = "navbar";
+
+    @Override
+    protected void onInitialize()
+    {
+        super.onInitialize();
+
+        Navbar navbar = new Navbar(NAVBAR_ID)
+        {
+            @Override
+            protected Component createBrand(String id)
+            {
+                BookmarkablePageLink brand = new BookmarkablePageLink(id, WebApplication.get().getHomePage());
+                brand.setBody(Model.of("Home"));
+
+                return brand;
+            }
+
+            @Override
+            protected void populateNavbarLeftItems(RepeatingView itemView)
+            {
+                super.populateNavbarLeftItems(itemView);
+
+                itemView.add(new BookmarkablePageLinkItem<Void>(
+                        itemView.newChildId(),
+                        Model.of("UserPage"),
+                        UserPage.class
+                ));
+                itemView.add(new BookmarkablePageLinkItem<Void>(
+                        itemView.newChildId(),
+                        Model.of("AdminPage"),
+                        AdminPage.class
+                ));
+            }
+
+            @Override
+            protected void populateNavbarRightItems(RepeatingView itemView)
+            {
+                super.populateNavbarRightItems(itemView);
+
+                itemView.add(new UserMenuDropDownItem(itemView.newChildId()));
+                itemView.add(new SignInItem(itemView.newChildId()));
+            }
+        };
+        navbar.add(new CssClassAppender(BootstrapCssClass.NAVBAR_FIXED_TOP));
+        this.add(navbar);
+
+        WebMarkupContainer modal = new WebMarkupContainer(MODAL_ID);
+        modal.setOutputMarkupId(true);
+        this.add(modal);
+
+        this.add(new ModalRequestBehavior(MODAL_ID));
+    }
+
+    @Override
+    public void renderHead(IHeaderResponse response)
+    {
+        super.renderHead(response);
+        response.render(new CssUrlReferenceHeaderItem("css/style.css", null, null));
+    }
+}
