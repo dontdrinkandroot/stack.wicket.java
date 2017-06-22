@@ -3,11 +3,11 @@ package net.dontdrinkandroot.stack.wicket.wicket.page;
 import net.dontdrinkandroot.stack.wicket.wicket.WebApplication;
 import net.dontdrinkandroot.stack.wicket.wicket.component.item.SignInItem;
 import net.dontdrinkandroot.stack.wicket.wicket.component.item.UserMenuDropDownItem;
-import net.dontdrinkandroot.wicket.behavior.CssClassAppender;
 import net.dontdrinkandroot.wicket.bootstrap.behavior.ModalRequestBehavior;
 import net.dontdrinkandroot.wicket.bootstrap.component.item.BookmarkablePageLinkItem;
 import net.dontdrinkandroot.wicket.bootstrap.component.navbar.Navbar;
-import net.dontdrinkandroot.wicket.bootstrap.css.BootstrapCssClass;
+import net.dontdrinkandroot.wicket.bootstrap.component.navbar.RepeatingNavbarNav;
+import net.dontdrinkandroot.wicket.bootstrap.css.NavbarPosition;
 import net.dontdrinkandroot.wicket.bootstrap.page.BootstrapPage;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.CssUrlReferenceHeaderItem;
@@ -36,39 +36,34 @@ public class DecoratorPage<T> extends BootstrapPage<T>
             @Override
             protected Component createBrand(String id)
             {
-                BookmarkablePageLink brand = new BookmarkablePageLink(id, WebApplication.get().getHomePage());
-                brand.setBody(Model.of("Home"));
-
-                return brand;
+                return DecoratorPage.this.createBrand(id);
             }
 
             @Override
-            protected void populateNavbarLeftItems(RepeatingView itemView)
+            protected void populateCollapseItems(RepeatingView collapseItemView)
             {
-                super.populateNavbarLeftItems(itemView);
+                RepeatingNavbarNav navbarLeft = new RepeatingNavbarNav(collapseItemView.newChildId())
+                {
+                    @Override
+                    protected void populateItems(RepeatingView itemView)
+                    {
+                        DecoratorPage.this.populateNavbarLeftItems(itemView);
+                    }
+                };
+                collapseItemView.add(navbarLeft);
 
-                itemView.add(new BookmarkablePageLinkItem<Void>(
-                        itemView.newChildId(),
-                        Model.of("UserPage"),
-                        UserPage.class
-                ));
-                itemView.add(new BookmarkablePageLinkItem<Void>(
-                        itemView.newChildId(),
-                        Model.of("AdminPage"),
-                        AdminPage.class
-                ));
-            }
-
-            @Override
-            protected void populateNavbarRightItems(RepeatingView itemView)
-            {
-                super.populateNavbarRightItems(itemView);
-
-                itemView.add(new UserMenuDropDownItem(itemView.newChildId()));
-                itemView.add(new SignInItem(itemView.newChildId()));
+                RepeatingNavbarNav navbarRight = new RepeatingNavbarNav(collapseItemView.newChildId())
+                {
+                    @Override
+                    protected void populateItems(RepeatingView itemView)
+                    {
+                        DecoratorPage.this.populateNavbarRightItems(itemView);
+                    }
+                };
+                collapseItemView.add(navbarRight);
             }
         };
-        navbar.add(new CssClassAppender(BootstrapCssClass.NAVBAR_FIXED_TOP));
+        navbar.setPosition(NavbarPosition.FIXED_TOP);
         this.add(navbar);
 
         WebMarkupContainer modal = new WebMarkupContainer(MODAL_ID);
@@ -76,6 +71,34 @@ public class DecoratorPage<T> extends BootstrapPage<T>
         this.add(modal);
 
         this.add(new ModalRequestBehavior(MODAL_ID));
+    }
+
+    protected Component createBrand(String id)
+    {
+        BookmarkablePageLink brand = new BookmarkablePageLink(id, WebApplication.get().getHomePage());
+        brand.setBody(Model.of("Home"));
+
+        return brand;
+    }
+
+    protected void populateNavbarLeftItems(RepeatingView itemView)
+    {
+        itemView.add(new BookmarkablePageLinkItem<Void>(
+                itemView.newChildId(),
+                Model.of("UserPage"),
+                UserPage.class
+        ));
+        itemView.add(new BookmarkablePageLinkItem<Void>(
+                itemView.newChildId(),
+                Model.of("AdminPage"),
+                AdminPage.class
+        ));
+    }
+
+    protected void populateNavbarRightItems(RepeatingView itemView)
+    {
+        itemView.add(new UserMenuDropDownItem(itemView.newChildId()));
+        itemView.add(new SignInItem(itemView.newChildId()));
     }
 
     @Override
