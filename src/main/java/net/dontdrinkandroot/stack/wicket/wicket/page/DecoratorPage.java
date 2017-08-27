@@ -7,6 +7,7 @@ import net.dontdrinkandroot.wicket.bootstrap.behavior.ModalRequestBehavior;
 import net.dontdrinkandroot.wicket.bootstrap.component.item.BookmarkablePageLinkItem;
 import net.dontdrinkandroot.wicket.bootstrap.component.navbar.Navbar;
 import net.dontdrinkandroot.wicket.bootstrap.component.navbar.RepeatingNavbarNav;
+import net.dontdrinkandroot.wicket.bootstrap.css.NavbarAlignment;
 import net.dontdrinkandroot.wicket.bootstrap.css.NavbarPosition;
 import net.dontdrinkandroot.wicket.bootstrap.page.BootstrapPage;
 import org.apache.wicket.Component;
@@ -60,6 +61,7 @@ public class DecoratorPage<T> extends BootstrapPage<T>
                         DecoratorPage.this.populateNavbarRightItems(itemView);
                     }
                 };
+                navbarRight.setAlignment(NavbarAlignment.RIGHT);
                 collapseItemView.add(navbarRight);
             }
         };

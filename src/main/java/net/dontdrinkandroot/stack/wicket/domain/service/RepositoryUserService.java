@@ -1,8 +1,7 @@
 package net.dontdrinkandroot.stack.wicket.domain.service;
 
-import net.dontdrinkandroot.persistence.service.DaoEntityService;
-import net.dontdrinkandroot.stack.wicket.domain.dao.UserDao;
-import net.dontdrinkandroot.stack.wicket.model.User;
+import net.dontdrinkandroot.stack.wicket.domain.model.User;
+import net.dontdrinkandroot.stack.wicket.domain.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,28 +13,25 @@ import javax.inject.Inject;
 /**
  * @author Philip Washington Sorst <philip@sorst.net>
  */
-@Service("userService")
-public class DaoUserService extends DaoEntityService<User, Long> implements UserService
+@Service
+@Transactional(readOnly = true)
+public class RepositoryUserService implements UserService
 {
+    private UserRepository userRepository;
+
     private PasswordEncoder passwordEncoder;
 
-    protected DaoUserService()
-    {
-        /* Reflection instantiation */
-    }
-
     @Inject
-    public DaoUserService(UserDao userDao, PasswordEncoder passwordEncoder)
+    public RepositoryUserService(UserRepository userRepository, PasswordEncoder passwordEncoder)
     {
-        super(userDao);
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
-        UserDetails userDetails = this.getDao().findByUsernameWithRoles(username);
+        UserDetails userDetails = this.userRepository.findByUsername(username);
         if (null == userDetails) {
             throw new UsernameNotFoundException(String.format("No user found for name: %s", username));
         }
@@ -44,15 +40,16 @@ public class DaoUserService extends DaoEntityService<User, Long> implements User
     }
 
     @Override
-    protected UserDao getDao()
-    {
-        return (UserDao) super.getDao();
-    }
-
-    @Override
     @Transactional
     public void setPassword(User user, String password)
     {
         user.setPassword(this.passwordEncoder.encode(password));
+    }
+
+    @Override
+    @Transactional
+    public User save(User user)
+    {
+        return this.userRepository.save(user);
     }
 }

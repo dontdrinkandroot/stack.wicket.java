@@ -1,0 +1,8 @@
+wicket:
+  core:
+    settings:
+      markup:
+        strip-wicket-tags: true
+spring:
+  jpa:
+    show-sql: true

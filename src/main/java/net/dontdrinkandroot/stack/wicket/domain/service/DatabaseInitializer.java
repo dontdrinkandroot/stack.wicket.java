@@ -1,7 +1,7 @@
 package net.dontdrinkandroot.stack.wicket.domain.service;
 
-import net.dontdrinkandroot.stack.wicket.model.Role;
-import net.dontdrinkandroot.stack.wicket.model.User;
+import net.dontdrinkandroot.stack.wicket.domain.model.Role;
+import net.dontdrinkandroot.stack.wicket.domain.model.User;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.Environment;
@@ -21,11 +21,6 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
     private UserService userService;
 
     private Environment environment;
-
-    protected DatabaseInitializer()
-    {
-        /* Reflection Instantiation */
-    }
 
     @Inject
     public DatabaseInitializer(UserService userService, Environment environment)
@@ -48,7 +43,7 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
             this.userService.save(admin);
         }
 
-        if (activeProfiles.contains("test")) {
+        if (activeProfiles.contains("test") || activeProfiles.contains("development")) {
             try {
                 this.userService.loadUserByUsername("user");
             } catch (UsernameNotFoundException e) {

@@ -1,0 +1,11 @@
+wicket:
+  core:
+    settings:
+      markup:
+        strip-wicket-tags: true
+      general:
+        configuration-type: deployment
+server:
+  error:
+    whitelabel:
+      enabled: false

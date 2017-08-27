@@ -1,21 +1,32 @@
-package net.dontdrinkandroot.stack.wicket.model;
+package net.dontdrinkandroot.stack.wicket.domain.model;
 
-import net.dontdrinkandroot.persistence.entity.GeneratedLongIdEntity;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Philip Washington Sorst <philip@sorst.net>
  */
 @Entity
-public class User extends GeneratedLongIdEntity implements UserDetails
+public class User implements UserDetails
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    public Long getId()
+    {
+        return this.id;
+    }
+
     @Column(unique = true, nullable = false)
     private String username;
 
@@ -34,9 +45,8 @@ public class User extends GeneratedLongIdEntity implements UserDetails
     @Column(nullable = false)
     private boolean enabled = true;
 
-    @ElementCollection
-    @Enumerated(EnumType.STRING)
-    private Set<Role> roles = new HashSet<>();
+    @Column
+    private String roles;
 
     public User()
     {
@@ -51,17 +61,40 @@ public class User extends GeneratedLongIdEntity implements UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
-        return this.roles;
+        return this.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
     }
 
-    public void addRole(Role role)
+    public void addRole(String role)
     {
-        this.roles.add(role);
+        Collection<String> roles = this.getRoles();
+        if (!roles.contains(role)) {
+            roles.add(role);
+        }
+
+        this.setRoles(roles);
     }
 
-    public void removeRole(Role role)
+    public void removeRole(String role)
     {
-        this.roles.remove(role);
+        Collection<String> roles = this.getRoles();
+        roles.remove(role);
+
+        this.setRoles(roles);
+    }
+
+    public Collection<String> getRoles()
+    {
+        List<String> roles = new ArrayList<>();
+        if (null != this.roles) {
+            roles.addAll(Arrays.asList(this.roles.split(",")));
+        }
+
+        return roles;
+    }
+
+    public void setRoles(Collection<String> roles)
+    {
+        this.roles = String.join(",", roles);
     }
 
     @Override
